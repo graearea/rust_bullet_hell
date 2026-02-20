@@ -1,7 +1,7 @@
+use bolet::Bolet;
+use enema::Enema;
 use macroquad::prelude::*;
 use player::Player;
-use enema::Enema;
-use bolet::Bolet;
 
 mod player;
 mod enema;
@@ -25,18 +25,22 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
     let mut player = Player::new(vec2(200.0, 200.0),
-         200.0,
-         20.0,
-    );
-    let mut enemy = Enema::new(
-         vec2(100.0, 100.0),
-         50.0,
-         15.0,
+                                 200.0,
+                                 20.0,
     );
 
     let mut frame_count = 0;
-    let mut things_to_draw: Vec<&mut dyn Drawable> = vec![&mut enemy];
+    // let mut things_to_draw: Vec<&mut dyn Drawable> = vec![
+    //     // &mut Enema::new(vec2(100.0, 400.0), 50.0, 15.0),
+    //     // &mut Enema::new(vec2(400.0, 400.0), 50.0, 15.0),
+    //     // &mut Enema::new(vec2(100.0, 100.0), 50.0, 15.0)
+    // ];
     let mut bullets: Vec<Bolet> = vec![];
+    let enemies: Vec<Enema> = vec![
+        Enema::new(vec2(100.0, 400.0), 50.0, 15.0),
+        Enema::new(vec2(400.0, 400.0), 50.0, 15.0),
+        Enema::new(vec2(100.0, 100.0), 50.0, 15.0)
+    ];
 
     loop {
         clear_background(BLACK);
@@ -48,8 +52,12 @@ async fn main() {
         player.draw();
 
         // Enemy shoots at player
-        if rand::gen_range(0, 20) == 0 {
-            bullets.push(enemy.shoot_at(player.pos));
+        for enema in &enemies {
+            if rand::gen_range(0, 20) == 0 {
+                bullets.push(enema.shoot_at(player.pos));
+
+            }
+            enema.draw()
         }
 
         // Update and draw bullets
@@ -58,7 +66,6 @@ async fn main() {
             bullet.draw();
         }
 
-        enemy.draw();
 
         next_frame().await;
     }
