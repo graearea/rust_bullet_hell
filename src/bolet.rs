@@ -4,7 +4,7 @@ use macroquad::color::WHITE;
 use crate::Drawable;
 
 pub struct Bolet {
-    pos: Vec2,
+    pub pos: Vec2,
     speed: f32,
     direction: f32,
 }
