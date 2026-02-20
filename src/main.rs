@@ -2,7 +2,6 @@ use std::process::exit;
 use bolet::Bolet;
 use enema::Enema;
 use macroquad::prelude::*;
-use macroquad::telemetry::disable;
 use player::Player;
 
 mod player;
@@ -39,11 +38,27 @@ async fn main() {
         Enema::new(vec2(400.0, 400.0), 50.0, 15.0),
         Enema::new(vec2(100.0, 100.0), 50.0, 15.0)
     ];
-
+    let start_time = get_time();
+    let mut new_time = get_time();
+    let mut fps = 1.0;
     'game: loop {
         clear_background(BLACK);
         let delta_time = get_frame_time(); // Equivalent to 'dt' in other engines
+        let elapsed_time = get_time() - start_time;
         frame_count += 1;
+
+
+        if (get_time() > new_time){
+            println!("here");
+            fps = 1.0 / delta_time;
+            new_time = get_time()+1.0
+        }
+        draw_text(
+            &format!("FPS: {:.0}  Time: {:.1}s", fps, elapsed_time),
+            10.0, 10.0,
+            20.0,
+            RED,
+        );
 
         // Update and draw player directly
         player.update(delta_time);
