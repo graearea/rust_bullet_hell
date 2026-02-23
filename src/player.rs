@@ -19,7 +19,7 @@ impl Player{
 }
 impl Drawable for Player {
     fn draw(&self) {
-        draw_rectangle(self.pos.x, self.pos.y, self.size, self.size, BLUE);
+        draw_rectangle(self.pos.x-(self.size / 2.0), self.pos.y-(self.size / 2.0), self.size, self.size, BLUE);
     }
     fn update(&mut self, delta_time: f32) {
         if is_key_down(KeyCode::Right) {
