@@ -42,7 +42,7 @@ async fn main() {
         Enema::new(vec2(100.0, 100.0)),
     ];
 
-    let holes: Vec<Hole> = vec![Hole::new(vec2(500.0,200.0))];
+    let holes: Vec<Hole> = vec![Hole::new(vec2(300.0,200.0))];
 
     let start_time = get_time();
     let mut new_time = get_time();
@@ -100,10 +100,18 @@ async fn main() {
         }
 
         bullets.retain(|bullet| {
+            let mut sucked=false;
+            for hole in &holes{
+                if bullet.pos.distance(hole.pos) < hole.size {
+                    sucked= true;
+                }
+            }
             !(bullet.pos.x > screen_width()
                 || bullet.pos.x < 0.0
                 || bullet.pos.y > screen_height()
-                || bullet.pos.y < 0.0)
+                || bullet.pos.y < 0.0
+                || sucked    
+            )
 
         });
 

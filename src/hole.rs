@@ -8,7 +8,7 @@ use macroquad::rand::gen_range;
 pub struct Hole {
     pub pos: Vec2,
     velocity: Vec2,
-    size: f32,
+    pub(crate) size: f32,
 }
 
 impl Drawable for Hole {

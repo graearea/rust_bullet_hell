@@ -11,9 +11,9 @@ pub struct Bolet {
 impl HasPhysics for Bolet {
     fn add_velocity(&mut self, singularity: Vec2, delta_time: f32) {
         let direction = singularity - self.pos;
-        let distance = direction.length().max(5.0);
+        let distance = direction.length().max(60.0);
 
-        let gravity_strength = 50000.0;
+        let gravity_strength = 2000000.0;
         let force = gravity_strength / (distance * distance);
 
         let pull = direction.normalize() * force * delta_time;
