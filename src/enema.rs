@@ -1,12 +1,13 @@
 use crate::bolet::Bolet;
 use crate::Drawable;
 use macroquad::color::RED;
-use macroquad::math::{f32, Vec2};
+use macroquad::math::{vec2, Vec2};
 use macroquad::prelude::draw_circle;
+use macroquad::rand::gen_range;
 
 pub struct Enema {
     pos: Vec2,
-    speed: f32,
+    speed: Vec2,
     size: f32,
 }
 
@@ -16,13 +17,23 @@ impl Drawable for Enema {
     }
 
     fn update(&mut self, delta_time: f32) {
-        todo!()
+        self.speed.x += gen_range(-50.0, 50.0) * delta_time;
+        self.speed.y += gen_range(-50.0, 50.0) * delta_time;
+        let max_speed = 100.0;
+        self.speed = self.speed.clamp_length_max(max_speed);
+        // println!("enema speed{}" , self.speed);
+        self.pos += self.speed * delta_time;
+        // println!("enema pos{}" , self.pos);
     }
 }
 
 impl Enema {
-    pub fn new(pos: Vec2, speed: f32, size: f32) -> Self {
-        Self { pos, speed, size }
+    pub fn new(pos: Vec2) -> Self {
+        Self {
+            pos,
+            speed: vec2(0.0, 0.0),
+            size: 20.0,
+        }
     }
     pub fn shoot_at(&self, target: Vec2) -> Bolet {
         let direction = (target - self.pos).normalize_or_zero();

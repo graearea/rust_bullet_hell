@@ -33,10 +33,10 @@ async fn main() {
     let mut frame_count = 0;
 
     let mut bullets: Vec<Bolet> = vec![];
-    let enemies: Vec<Enema> = vec![
-        Enema::new(vec2(100.0, 400.0), 50.0, 15.0),
-        Enema::new(vec2(400.0, 400.0), 50.0, 15.0),
-        Enema::new(vec2(100.0, 100.0), 50.0, 15.0)
+    let mut enemies: Vec<Enema> = vec![
+        Enema::new(vec2(100.0, 400.0)),
+        Enema::new(vec2(400.0, 400.0)),
+        Enema::new(vec2(100.0, 100.0))
     ];
     let start_time = get_time();
     let mut new_time = get_time();
@@ -62,10 +62,12 @@ async fn main() {
 
         // Update and draw player directly
         player.update(delta_time);
+
         player.draw();
 
         // Enemy shoots at player
-        for enema in &enemies {
+        for enema in &mut enemies {
+            enema.update(delta_time);
             if rand::gen_range(0, 20) == 0 {
                 bullets.push(enema.shoot_at(player.pos));
             }
@@ -76,7 +78,7 @@ async fn main() {
         for bullet in &mut bullets {
             bullet.update(delta_time);
             let distance = bullet.pos.distance(player.pos);
-            println!("Distance: {}", distance);
+            // println!("Distance: {}", distance);
             if distance < 5.0 {
                 break 'game
             }
