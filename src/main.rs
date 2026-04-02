@@ -1,16 +1,23 @@
-use std::process::exit;
 use bolet::Bolet;
 use enema::Enema;
 use macroquad::prelude::*;
 use player::Player;
+use hole::Hole;
+use std::process::exit;
 
-mod player;
-mod enema;
 mod bolet;
+mod hole;
+mod enema;
+mod player;
 
 trait Drawable {
     fn draw(&self);
     fn update(&mut self, delta_time: f32);
+}
+trait HasPhysics {
+    fn pos(&mut self) -> &mut Vec2;
+    fn velocity(&self) -> Vec2;
+    fn add_velocity(&mut self, delta: Vec2);
 }
 
 // Configuration for the window
@@ -25,10 +32,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut player = Player::new(vec2(200.0, 200.0),
-                                 200.0,
-                                 20.0,
-    );
+    let mut player = Player::new(vec2(200.0, 200.0), 200.0, 20.0);
 
     let mut frame_count = 0;
 
@@ -36,26 +40,29 @@ async fn main() {
     let mut enemies: Vec<Enema> = vec![
         Enema::new(vec2(100.0, 400.0)),
         Enema::new(vec2(400.0, 400.0)),
-        Enema::new(vec2(100.0, 100.0))
+        Enema::new(vec2(100.0, 100.0)),
     ];
+
+    let holes: Vec<Hole> = vec![Hole::new(vec2(500.0,200.0))];
+
     let start_time = get_time();
     let mut new_time = get_time();
     let mut fps = 1.0;
     'game: loop {
-        clear_background(BLACK);
+        clear_background(DARKPURPLE);
         let delta_time = get_frame_time(); // Equivalent to 'dt' in other engines
         let elapsed_time = get_time() - start_time;
         frame_count += 1;
 
-
-        if (get_time() > new_time){
+        if (get_time() > new_time) {
             println!("here");
             fps = 1.0 / delta_time;
-            new_time = get_time()+1.0
+            new_time = get_time() + 1.0
         }
         draw_text(
             &format!("FPS: {:.0}  Time: {:.1}s", fps, elapsed_time),
-            10.0, 10.0,
+            10.0,
+            10.0,
             20.0,
             RED,
         );
@@ -74,17 +81,28 @@ async fn main() {
             enema.draw()
         }
 
+        for hole in &holes{
+            hole.draw()
+        }
+
         // Update and draw bullets
         for bullet in &mut bullets {
             bullet.update(delta_time);
             let distance = bullet.pos.distance(player.pos);
             // println!("Distance: {}", distance);
-            if distance < 5.0 {
-                break 'game
+            if distance < player.size / 2.0 {
+                break 'game;
             }
             bullet.draw();
         }
 
+        bullets.retain(|bullet| {
+            !(bullet.pos.x > screen_width()
+                || bullet.pos.x < 0.0
+                || bullet.pos.y > screen_height()
+                || bullet.pos.y < 0.0)
+
+        });
 
         next_frame().await;
     }

@@ -1,19 +1,19 @@
 use crate::bolet::Bolet;
 use crate::Drawable;
-use macroquad::color::RED;
+use macroquad::color::{BLACK, RED};
 use macroquad::math::{vec2, Vec2};
 use macroquad::prelude::draw_circle;
 use macroquad::rand::gen_range;
 
-pub struct Enema {
+pub struct Hole {
     pos: Vec2,
     velocity: Vec2,
     size: f32,
 }
 
-impl Drawable for Enema {
+impl Drawable for Hole {
     fn draw(&self) {
-        draw_circle(self.pos.x, self.pos.y, self.size, RED);
+        draw_circle(self.pos.x, self.pos.y, self.size, BLACK);
     }
 
     fn update(&mut self, delta_time: f32) {
@@ -27,7 +27,7 @@ impl Drawable for Enema {
     }
 }
 
-impl Enema {
+impl Hole {
     pub fn new(pos: Vec2) -> Self {
         Self {
             pos,
@@ -35,8 +35,5 @@ impl Enema {
             size: 20.0,
         }
     }
-    pub fn shoot_at(&self, target: Vec2) -> Bolet {
-        let direction = (target - self.pos).normalize_or_zero();
-        Bolet::new(self.pos, 200.0, direction.y.atan2(direction.x))
-    }
+    pub fn suck(){}
 }
