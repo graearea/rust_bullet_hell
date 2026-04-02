@@ -6,7 +6,7 @@ use macroquad::prelude::draw_circle;
 use macroquad::rand::gen_range;
 
 pub struct Hole {
-    pos: Vec2,
+    pub pos: Vec2,
     velocity: Vec2,
     size: f32,
 }

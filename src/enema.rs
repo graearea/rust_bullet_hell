@@ -27,6 +27,7 @@ impl Drawable for Enema {
     }
 }
 
+
 impl Enema {
     pub fn new(pos: Vec2) -> Self {
         Self {

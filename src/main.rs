@@ -14,10 +14,9 @@ trait Drawable {
     fn draw(&self);
     fn update(&mut self, delta_time: f32);
 }
+
 trait HasPhysics {
-    fn pos(&mut self) -> &mut Vec2;
-    fn velocity(&self) -> Vec2;
-    fn add_velocity(&mut self, delta: Vec2);
+    fn add_velocity(&mut self, singularity: Vec2, delta_time: f32);
 }
 
 // Configuration for the window
@@ -83,10 +82,14 @@ async fn main() {
 
         for hole in &holes{
             hole.draw()
+            
         }
 
         // Update and draw bullets
         for bullet in &mut bullets {
+            for hole in &holes{
+                bullet.add_velocity(hole.pos, delta_time)
+            }
             bullet.update(delta_time);
             let distance = bullet.pos.distance(player.pos);
             // println!("Distance: {}", distance);
