@@ -28,8 +28,14 @@ impl HasPhysics for Bolet {
     }
 }
 
+
 impl Bolet {
-    pub fn new(pos: Vec2, speed: f32, direction: f32) -> Self {
+        pub fn in_bounds(&self, width: f32, height: f32) -> bool {
+            self.pos.x > -1000.0 && self.pos.x < width + 1000.0
+                && self.pos.y > -1000.0 && self.pos.y < height + 1000.0
+        }
+
+        pub fn new(pos: Vec2, speed: f32, direction: f32) -> Self {
         // Convert polar (speed + angle) to cartesian velocity
         Self {
             pos: pos,

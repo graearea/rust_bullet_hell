@@ -31,16 +31,9 @@ impl GameState {
             RED,
         );
         self.player.draw();
-
-        for enema in & self.enemies {
-            enema.draw()
-        }
-        for hole in &self.holes{
-            hole.draw()
-        }
-        for bulet in &self.bullets {
-            bulet.draw();
-        }
+        self.enemies.iter().for_each(|e| e.draw());
+        self.holes.iter().for_each(|h| h.draw());
+        self.bullets.iter().for_each(|b| b.draw());
     }
 }
 
@@ -84,10 +77,8 @@ impl GameState {
                     sucked= true;
                 }
             }
-            !(bullet.pos.x > screen_width()
-                || bullet.pos.x < 0.0
-                || bullet.pos.y > screen_height()
-                || bullet.pos.y < 0.0
+
+            !(!bullet.in_bounds(screen_width(),screen_height())
                 || bullet.hit
                 || sucked
             )
@@ -125,8 +116,4 @@ impl GameState {
             fps: 1.0,
         }
     }
-}
-
-impl GameState {
-
 }
