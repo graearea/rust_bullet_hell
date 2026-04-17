@@ -77,7 +77,6 @@ impl GameState {
                     sucked= true;
                 }
             }
-
             !(!bullet.in_bounds(screen_width(),screen_height())
                 || bullet.hit
                 || sucked

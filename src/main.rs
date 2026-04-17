@@ -26,8 +26,8 @@ enum Screen {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Rust Bullet Hell".to_owned(),
-        window_width: 1024,
-        window_height: 768,
+        window_width: 1280,
+        window_height: 1024,
         ..Default::default()
     }
 }
@@ -83,6 +83,6 @@ async fn main() {
         if is_key_pressed(KeyCode::Escape) {
             exit(0);
         }
-        
+
     }
 }
