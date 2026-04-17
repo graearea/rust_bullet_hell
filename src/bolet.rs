@@ -6,6 +6,13 @@ use crate::{Drawable, HasPhysics};
 pub struct Bolet {
     pub pos: Vec2,
     velocity: Vec2,
+    pub hit:bool
+}
+
+impl Bolet {
+    pub(crate) fn hit(&mut self) {
+        self.hit=true;
+    }
 }
 
 impl HasPhysics for Bolet {
@@ -13,7 +20,7 @@ impl HasPhysics for Bolet {
         let direction = singularity - self.pos;
         let distance = direction.length().max(60.0);
 
-        let gravity_strength = 2000000.0;
+        let gravity_strength = 4000000.0;
         let force = gravity_strength / (distance * distance);
 
         let pull = direction.normalize() * force * delta_time;
@@ -25,8 +32,9 @@ impl Bolet {
     pub fn new(pos: Vec2, speed: f32, direction: f32) -> Self {
         // Convert polar (speed + angle) to cartesian velocity
         Self {
-            pos,
-            velocity: vec2(direction.cos() * speed, direction.sin() * speed)
+            pos: pos,
+            velocity: vec2(direction.cos() * speed, direction.sin() * speed),
+            hit: false
         }
     }
 }

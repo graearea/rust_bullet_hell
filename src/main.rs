@@ -23,15 +23,15 @@ trait HasPhysics {
 fn window_conf() -> Conf {
     Conf {
         window_title: "Rust Bullet Hell".to_owned(),
-        window_width: 640,
-        window_height: 480,
+        window_width: 1024,
+        window_height: 768,
         ..Default::default()
     }
 }
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut player = Player::new(vec2(200.0, 200.0), 200.0, 20.0);
+    let mut player = Player::new(vec2(200.0, 200.0), 200.0, 20.0,100);
 
     let mut frame_count = 0;
 
@@ -82,7 +82,6 @@ async fn main() {
 
         for hole in &holes{
             hole.draw()
-            
         }
 
         // Update and draw bullets
@@ -94,7 +93,8 @@ async fn main() {
             let distance = bullet.pos.distance(player.pos);
             // println!("Distance: {}", distance);
             if distance < player.size / 2.0 {
-                break 'game;
+                player.damage();
+                bullet.hit()
             }
             bullet.draw();
         }
@@ -110,10 +110,15 @@ async fn main() {
                 || bullet.pos.x < 0.0
                 || bullet.pos.y > screen_height()
                 || bullet.pos.y < 0.0
-                || sucked    
+                || bullet.hit
+                || sucked
             )
 
         });
+
+        if(player.health<1){
+            break 'game;
+        }
 
         next_frame().await;
     }
