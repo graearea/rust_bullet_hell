@@ -1,13 +1,11 @@
-use bolet::Bolet;
-use enema::Enema;
+use gamestate::GameState;
 use macroquad::prelude::*;
-use player::Player;
-use hole::Hole;
 use std::process::exit;
 
 mod bolet;
-mod hole;
 mod enema;
+mod gamestate;
+mod hole;
 mod player;
 
 trait Drawable {
@@ -17,6 +15,11 @@ trait Drawable {
 
 trait HasPhysics {
     fn add_velocity(&mut self, singularity: Vec2, delta_time: f32);
+}
+
+enum Screen {
+    Playing,
+    GameOver,
 }
 
 // Configuration for the window
@@ -31,100 +34,29 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut player = Player::new(vec2(200.0, 200.0), 200.0, 20.0,100);
+    let mut game = GameState::new();
+    let mut screen = Screen::Playing;
 
-    let mut frame_count = 0;
-
-    let mut bullets: Vec<Bolet> = vec![];
-    let mut enemies: Vec<Enema> = vec![
-        Enema::new(vec2(100.0, 400.0)),
-        Enema::new(vec2(400.0, 400.0)),
-        Enema::new(vec2(100.0, 100.0)),
-    ];
-
-    let holes: Vec<Hole> = vec![Hole::new(vec2(300.0,200.0))];
-
-    let start_time = get_time();
-    let mut new_time = get_time();
-    let mut fps = 1.0;
-    'game: loop {
-        clear_background(DARKPURPLE);
-        let delta_time = get_frame_time(); // Equivalent to 'dt' in other engines
-        let elapsed_time = get_time() - start_time;
-        frame_count += 1;
-
-        if (get_time() > new_time) {
-            println!("here");
-            fps = 1.0 / delta_time;
-            new_time = get_time() + 1.0
-        }
-        draw_text(
-            &format!("FPS: {:.0}  Time: {:.1}s", fps, elapsed_time),
-            10.0,
-            10.0,
-            20.0,
-            RED,
-        );
-
-        // Update and draw player directly
-        player.update(delta_time);
-
-        player.draw();
-
-        // Enemy shoots at player
-        for enema in &mut enemies {
-            enema.update(delta_time);
-            if rand::gen_range(0, 20) == 0 {
-                bullets.push(enema.shoot_at(player.pos));
+    loop {
+        match screen {
+            Screen::Playing => {
+                if !game.update() {
+                    screen = Screen::GameOver;
+                }
+                game.draw();
             }
-            enema.draw()
-        }
-
-        for hole in &holes{
-            hole.draw()
-        }
-
-        // Update and draw bullets
-        for bullet in &mut bullets {
-            for hole in &holes{
-                bullet.add_velocity(hole.pos, delta_time)
-            }
-            bullet.update(delta_time);
-            let distance = bullet.pos.distance(player.pos);
-            // println!("Distance: {}", distance);
-            if distance < player.size / 2.0 {
-                player.damage();
-                bullet.hit()
-            }
-            bullet.draw();
-        }
-
-        bullets.retain(|bullet| {
-            let mut sucked=false;
-            for hole in &holes{
-                if bullet.pos.distance(hole.pos) < hole.size {
-                    sucked= true;
+            Screen::GameOver => {
+                draw_game_over();
+                if is_key_pressed(KeyCode::Escape) {
+                    exit(0);
                 }
             }
-            !(bullet.pos.x > screen_width()
-                || bullet.pos.x < 0.0
-                || bullet.pos.y > screen_height()
-                || bullet.pos.y < 0.0
-                || bullet.hit
-                || sucked
-            )
-
-        });
-
-        if(player.health<1){
-            break 'game;
         }
-
         next_frame().await;
     }
 
     // Game over screen loop
-    loop {
+    fn draw_game_over() {
         clear_background(BLACK);
 
         let text = "GAME OVER";
@@ -151,7 +83,6 @@ async fn main() {
         if is_key_pressed(KeyCode::Escape) {
             exit(0);
         }
-
-        next_frame().await;
+        
     }
 }
