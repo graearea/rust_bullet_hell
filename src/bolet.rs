@@ -22,7 +22,7 @@ impl HasPhysics for Bolet {
         let distance = direction.length().max(120.0);
 
         let gravity_strength = 8000000.0;
-        let force = gravity_strength / (distance * distance);
+        let force = gravity_strength / (distance * (distance / 2.0));
 
         let pull = direction.normalize() * force * delta_time;
         self.velocity += pull;

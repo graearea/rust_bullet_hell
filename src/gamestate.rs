@@ -44,7 +44,6 @@ impl GameState {
         let elapsed_time = get_time() - self.start_time;
         self.frame_count += 1;
         if (get_time() > new_time) {
-            println!("here");
             self.fps = 1.0 / delta_time;
             new_time = get_time() + 1.0
         }
