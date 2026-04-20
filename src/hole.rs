@@ -1,6 +1,5 @@
-use crate::bolet::Bolet;
 use crate::Drawable;
-use macroquad::color::{BLACK, RED};
+use macroquad::color::Color;
 use macroquad::math::{vec2, Vec2};
 use macroquad::prelude::draw_circle;
 use macroquad::rand::gen_range;
@@ -13,7 +12,24 @@ pub struct Hole {
 
 impl Drawable for Hole {
     fn draw(&self) {
-        draw_circle(self.pos.x, self.pos.y, self.size, BLACK);
+        // Draw outer rings first (more transparent), inner rings last (more opaque)
+        (0..40).rev().for_each(|step| {
+            let t = (step as f32) / 40.0;  // 0.0 at outer edge, 1.0 at center
+            let alpha = t * t * t * 0.8;   // cubic falloff - very subtle at edges, ramps up fast
+            draw_circle(
+                self.pos.x,
+                self.pos.y,
+                self.size*2.0 * (4.0 - t * 3.5), // size grows outward
+                Color::new(0.0, 0.0, 0.0, alpha),
+            );
+        });
+        // Solid core
+        draw_circle(
+            self.pos.x,
+            self.pos.y,
+            self.size * 0.5,
+            Color::new(0.0, 0.0, 0.0, 1.0),
+        );
     }
 
     fn update(&mut self, delta_time: f32) {
@@ -35,5 +51,5 @@ impl Hole {
             size: 20.0,
         }
     }
-    pub fn suck(){}
+    pub fn suck() {}
 }
