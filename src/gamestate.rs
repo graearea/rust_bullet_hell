@@ -91,7 +91,7 @@ impl GameState {
 
 impl GameState {
     pub(crate) fn new() -> Self {
-        let mut player = Player::new(vec2(200.0, 200.0), 200.0, 20.0,100);
+        let mut player = Player::new(vec2(400.0, 600.0), 200.0, 20.0,100);
 
         let mut bullets: Vec<Bolet> = vec![];
         let mut enemies: Vec<Enema> = vec![
@@ -100,7 +100,10 @@ impl GameState {
             Enema::new(vec2(100.0, 100.0)),
         ];
 
-        let holes: Vec<Hole> = vec![Hole::new(vec2(300.0,200.0))];
+        let holes: Vec<Hole> = vec![
+            Hole::new(vec2(300.0,200.0)),
+            Hole::new(vec2(600.0,400.0)),
+        ];
 
         let start_time = get_time();
 
